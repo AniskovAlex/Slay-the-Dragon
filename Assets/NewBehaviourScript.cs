@@ -8,13 +8,13 @@ public class NewBehaviourScript : MonoBehaviour
     void Start()
     {
         int x = 14;
-        Debug.Log(x + 13);
-
+        int y = 10;
+        Debug.Log(x + y);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
