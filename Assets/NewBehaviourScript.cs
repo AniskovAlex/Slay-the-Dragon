@@ -4,17 +4,15 @@ using UnityEngine;
 
 public class NewBehaviourScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        int x = 14;
-        int y = 10;
-        Debug.Log(x + y);
-    }
+    public TextMesh output;
 
-    // Update is called once per frame
     void Update()
     {
-
+        Debug.Log("I am alive");
+        
+        if (Input.GetMouseButton(0))
+        {
+            output.text = "pressed!";
+        }
     }
 }
