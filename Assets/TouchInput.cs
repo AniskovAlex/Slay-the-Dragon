@@ -8,6 +8,20 @@ public class TouchInput : MonoBehaviour
     TextMesh textField;
     double holdTime = 0;
 
+    private GameObject TouchObject(Touch touch)
+    {
+        GameObject touched = null;
+        RaycastHit2D hit;
+        
+        if (hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touch.position), Vector2.down))
+        {
+            Debug.Log("sssss");
+            touched = hit.collider.gameObject;
+        }
+
+        return touched;
+
+    }
     private void Start()
     {
         text = GameObject.Find("Text");
@@ -22,13 +36,17 @@ public class TouchInput : MonoBehaviour
             switch (touch.phase)
             {
                 case TouchPhase.Began:
-                    textField.text = "Touched";
+                    GameObject f = TouchObject(touch);
+                    string name = "Touched";
+                    if (f != null)
+                        name = f.name;
+                    textField.text = name;
                     break;
                 case TouchPhase.Moved:
                     if (touch.deltaPosition.sqrMagnitude > 100)
                     {
                         textField.text = "Moved";
-                        holdTime = 0;    
+                        holdTime = 0;
                     }
                     break;
                 case TouchPhase.Stationary:
@@ -37,7 +55,7 @@ public class TouchInput : MonoBehaviour
                         textField.text = "Holding";
                     break;
                 case TouchPhase.Ended:
-                    textField.text = "untouched";
+                    //textField.text = "untouched";
                     holdTime = 0;
                     break;
                 default:
