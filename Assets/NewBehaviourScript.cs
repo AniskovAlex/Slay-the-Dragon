@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class NewBehaviourScript : MonoBehaviour
 {
-    public TextMesh output;
+    private TextMesh output;
 
-    void Update()
+
+    private void Start()
     {
         Debug.Log("I am alive");
+    }
+    void Update()
+    {
         
-        if (Input.GetMouseButton(0))
-        {
-            output.text = "pressed!";
-        }
     }
 }

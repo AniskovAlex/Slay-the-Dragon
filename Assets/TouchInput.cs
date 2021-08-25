@@ -4,21 +4,44 @@ using UnityEngine;
 
 public class TouchInput : MonoBehaviour
 {
-    GameObject particle;
+    GameObject text;
+    TextMesh textField;
+    double holdTime = 0;
+
+    private void Start()
+    {
+        text = GameObject.Find("Text");
+        textField = text.GetComponent<TextMesh>();
+    }
 
     void Update()
     {
-        foreach (Touch touch in Input.touches)
+        if (Input.touchCount > 0)
         {
-            if (touch.phase == TouchPhase.Began)
+            Touch touch = Input.touches[0];
+            switch (touch.phase)
             {
-                // Construct a ray from the current touch coordinates
-                Ray ray = Camera.main.ScreenPointToRay(touch.position);
-                if (Physics.Raycast(ray))
-                {
-                    // Create a particle if hit
-                    Instantiate(particle, transform.position, transform.rotation);
-                }
+                case TouchPhase.Began:
+                    textField.text = "Touched";
+                    break;
+                case TouchPhase.Moved:
+                    if (touch.deltaPosition.sqrMagnitude > 100)
+                    {
+                        textField.text = "Moved";
+                        holdTime = 0;    
+                    }
+                    break;
+                case TouchPhase.Stationary:
+                    holdTime += Time.fixedDeltaTime;
+                    if (holdTime > 1)
+                        textField.text = "Holding";
+                    break;
+                case TouchPhase.Ended:
+                    textField.text = "untouched";
+                    holdTime = 0;
+                    break;
+                default:
+                    break;
             }
         }
     }
