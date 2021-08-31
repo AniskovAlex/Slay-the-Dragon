@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TouchInput : MonoBehaviour
 {
+    GameBehaviour gameManager;
     GameObject text;
     TextMesh textField;
     double holdTime = 0;
@@ -15,7 +16,6 @@ public class TouchInput : MonoBehaviour
         
         if (hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touch.position), Vector2.down))
         {
-            Debug.Log("sssss");
             touched = hit.collider.gameObject;
         }
 
@@ -26,6 +26,7 @@ public class TouchInput : MonoBehaviour
     {
         text = GameObject.Find("Text");
         textField = text.GetComponent<TextMesh>();
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameBehaviour>();
     }
 
     void Update()
@@ -36,11 +37,27 @@ public class TouchInput : MonoBehaviour
             switch (touch.phase)
             {
                 case TouchPhase.Began:
-                    GameObject f = TouchObject(touch);
-                    string name = "Touched";
-                    if (f != null)
-                        name = f.name;
-                    textField.text = name;
+                    if (gameManager.win)
+                        gameManager.Restart();
+                    else
+                    {
+                        GameObject f = TouchObject(touch);
+
+                        if (f != null)
+                        {
+                            if (f.name == "Area of Attack")
+                            {
+                                Attack(f);
+                            }
+                            if (f.name == "Area of Defence")
+                            {
+                                Defence(f);
+                            }
+                            textField.text = "Da!";
+
+                        }
+                        textField.text = name;
+                    }
                     break;
                 case TouchPhase.Moved:
                     if (touch.deltaPosition.sqrMagnitude > 100)
@@ -62,5 +79,15 @@ public class TouchInput : MonoBehaviour
                     break;
             }
         }
+    }
+
+    private void Attack(GameObject area)
+    {
+        gameManager.DamageEnemy();
+    }
+
+    private void Defence(GameObject area)
+    {
+        gameManager.Defence();
     }
 }

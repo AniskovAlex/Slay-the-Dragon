@@ -4,11 +4,7 @@ using UnityEngine;
 
 public class AreaBehaviore : MonoBehaviour
 {
-
-    public void da(string da)
-    {
-
-    }
+    public string type;
 
     void Start()
     {
@@ -21,8 +17,4 @@ public class AreaBehaviore : MonoBehaviour
         
     }
 
-    private void TouchObjects(Touch touch)
-    {
-
-    }
 }
