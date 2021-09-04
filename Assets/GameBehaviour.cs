@@ -5,37 +5,47 @@ using UnityEngine.SceneManagement;
 
 public class GameBehaviour : MonoBehaviour
 {
-    private GameObject healthBar;
-    private GameObject staminaBar;
-    private IEnemy enemy;
-    public float HP
+    public float health
     {
-        get => currentHp;
+        get => healthCurrent;
         set
         {
             if (defenceTimeLeft <= 0)
             {
-                currentHp = value;
-                healthBar.transform.localScale = new Vector3(currentHp / HPPerScale, healthBar.transform.localScale.y);
-                if (currentHp <= 0)
+                healthCurrent = value;
+                healthBar.transform.localScale = new Vector3(healthCurrent / healthPerScale, healthBar.transform.localScale.y);
+                if (healthCurrent <= 0)
                 {
                     GameOver();
                 }
             }
+            else
+            {
+                staminaCurrent += 20;
+            }
         }
     }
-    private float maxHP = 100f;
-    private float currentHp = 100f;
-    private float HPPerScale;
-    private float defenceTimeLeft = 0f;
-    private float defenceTime = 0.4f;
+    public float healthMax;
 
-    private float maxStamina = 100f;
-    private float currentStamina;
-    private float staminaPerScale;
-    private float staminaRecoveryTime = 0f;
+    public float defenceTime;
 
-    private float damage = 2.5f;
+    public float staminaMax;
+
+    public float damage;
+
+    GameObject healthBar;
+    GameObject staminaBar;
+
+    IEnemy enemy;
+
+    float healthCurrent;
+    float healthPerScale;
+
+    float defenceTimeLeft = 0f;
+
+    float staminaCurrent;
+    float staminaPerScale;
+    float staminaRecoveryTime = 0f;
 
     public bool win
     {
@@ -46,12 +56,16 @@ public class GameBehaviour : MonoBehaviour
     void Start()
     {
         Time.timeScale = 1;
-        enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy>();
-        healthBar = GameObject.Find("HP Bar");
-        HPPerScale = maxHP / healthBar.transform.localScale.x;
-        currentStamina = maxStamina;
+
+        healthBar = GameObject.Find("Health Bar");
         staminaBar = GameObject.Find("Stamina Bar");
-        staminaPerScale = maxStamina / staminaBar.transform.localScale.x;
+        enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy>();
+
+        healthCurrent = healthMax;
+        healthPerScale = healthMax / healthBar.transform.localScale.x;
+
+        staminaCurrent = staminaMax;
+        staminaPerScale = staminaMax / staminaBar.transform.localScale.x;
     }
 
     // Update is called once per frame
@@ -59,10 +73,10 @@ public class GameBehaviour : MonoBehaviour
     {
         if (defenceTimeLeft > 0)
             defenceTimeLeft -= Time.deltaTime;
-        if (currentStamina < maxStamina && staminaRecoveryTime<=0)
+        if (staminaCurrent < staminaMax && staminaRecoveryTime <= 0)
         {
-            currentStamina = Mathf.Clamp(currentStamina + 35 * Time.deltaTime, 0, maxStamina);
-            staminaBar.transform.localScale = new Vector3(currentStamina / staminaPerScale, staminaBar.transform.localScale.y);
+            staminaCurrent = Mathf.Clamp(staminaCurrent + 35 * Time.deltaTime, 0, staminaMax);
+            staminaBar.transform.localScale = new Vector3(staminaCurrent / staminaPerScale, staminaBar.transform.localScale.y);
         }
         if (staminaRecoveryTime > 0)
             staminaRecoveryTime -= Time.deltaTime;
@@ -74,15 +88,16 @@ public class GameBehaviour : MonoBehaviour
 
     public void DamageEnemy()
     {
-        if (enemy != null && currentStamina >= 10)
+        if (enemy != null && staminaCurrent >= 10)
         {
             Debug.Log("Take this!");
-            enemy.HP -= damage;
-            currentStamina = Mathf.Clamp(currentStamina - 10, 0, maxStamina);
-            staminaBar.transform.localScale = new Vector3(currentStamina / staminaPerScale, staminaBar.transform.localScale.y);
+            enemy.health -= damage;
+
+            staminaCurrent = Mathf.Clamp(staminaCurrent - 10, 0, staminaMax);
+            staminaBar.transform.localScale = new Vector3(staminaCurrent / staminaPerScale, staminaBar.transform.localScale.y);
             staminaRecoveryTime = 1f;
         }
-        if (enemy.HP <= 0)
+        if (enemy.health <= 0)
         {
             Time.timeScale = 0f;
             winCondition = true;
@@ -91,7 +106,11 @@ public class GameBehaviour : MonoBehaviour
 
     public void Defence()
     {
-        defenceTimeLeft = defenceTime;
+        if (staminaCurrent > 20)
+        {
+            defenceTimeLeft = defenceTime;
+            staminaCurrent -= 20;
+        }
     }
 
     public void Restart()

@@ -7,22 +7,10 @@ public class TouchInput : MonoBehaviour
     GameBehaviour gameManager;
     GameObject text;
     TextMesh textField;
+
     double holdTime = 0;
 
-    private GameObject TouchObject(Touch touch)
-    {
-        GameObject touched = null;
-        RaycastHit2D hit;
-        
-        if (hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touch.position), Vector2.down))
-        {
-            touched = hit.collider.gameObject;
-        }
-
-        return touched;
-
-    }
-    private void Start()
+    void Start()
     {
         text = GameObject.Find("Text");
         textField = text.GetComponent<TextMesh>();
@@ -53,8 +41,6 @@ public class TouchInput : MonoBehaviour
                             {
                                 Defence(f);
                             }
-                            textField.text = "Da!";
-
                         }
                         textField.text = name;
                     }
@@ -81,6 +67,19 @@ public class TouchInput : MonoBehaviour
         }
     }
 
+    private GameObject TouchObject(Touch touch)
+    {
+        GameObject touched = null;
+        RaycastHit2D hit;
+
+        if (hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touch.position), Vector2.down))
+        {
+            touched = hit.collider.gameObject;
+        }
+
+        return touched;
+
+    }
     private void Attack(GameObject area)
     {
         gameManager.DamageEnemy();

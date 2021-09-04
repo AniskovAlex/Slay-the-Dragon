@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IEnemy
 {
-    public float HP { get; set; }
+    public float health { get; set; }
 }

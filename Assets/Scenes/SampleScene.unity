@@ -288,7 +288,6 @@ GameObject:
   - component: {fileID: 405325189}
   - component: {fileID: 405325188}
   - component: {fileID: 405325187}
-  - component: {fileID: 405325191}
   - component: {fileID: 405325192}
   m_Layer: 0
   m_Name: 'GoginSprite '
@@ -410,18 +409,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &405325191
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 405325186}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe192d371e5a4754f872522d02f8a14a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &405325192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -434,6 +421,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7386e9dafb00e6b40bff1ca5fb71f4d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthMax: 100
+  timeToAttackMin: 0.5
+  timeToAttackRange: 4.5
+  damage: 20
 --- !u!1 &471906645
 GameObject:
   m_ObjectHideFlags: 0
@@ -860,7 +851,7 @@ GameObject:
   - component: {fileID: 905907881}
   - component: {fileID: 905907880}
   m_Layer: 0
-  m_Name: HP Bar
+  m_Name: Health Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -961,6 +952,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc29a8996d71fcb41b27fdeb58a75de1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthMax: 100
+  defenceTime: 0.5
+  staminaMax: 100
+  damage: 2.5
 --- !u!4 &1169179363
 Transform:
   m_ObjectHideFlags: 0
