@@ -4,66 +4,71 @@ using UnityEngine;
 
 public class TouchInput : MonoBehaviour
 {
-    GameBehaviour gameManager;
-    GameObject text;
-    TextMesh textField;
+    IGameManager gameManager;
+
+    List<TouchDetail> touchDetails = new List<TouchDetail>();
+    delegate void test(TouchDetail touch);
+    event test report;
 
     double holdTime = 0;
 
     void Start()
     {
-        text = GameObject.Find("Text");
-        textField = text.GetComponent<TextMesh>();
-        gameManager = GameObject.Find("Game Manager").GetComponent<GameBehaviour>();
+        gameManager = GameObject.Find("Game Manager").GetComponent<IGameManager>();
+        report += gameManager.TouchBegun;
     }
 
     void Update()
     {
+        if (touchDetails.Count > 0)
+        {
+            if (touchDetails.Count != Input.touchCount)
+            {
+                foreach (Touch touch in Input.touches)
+                {
+
+                    if (touch.phase == TouchPhase.Began)
+                    {
+                        touchDetails.Add(new TouchDetail(touch.fingerId, touch, TouchObject(touch)));
+                    }
+                }
+            }
+            for (int i = 0; i < touchDetails.Count; i++)
+            {
+                TouchDetail touchDetail = touchDetails[i];
+                int index = touchDetails.IndexOf(touchDetail);
+
+                switch (touchDetail.getTouch().phase)
+                {
+                    case TouchPhase.Began:
+                        report(touchDetail);
+                        break;
+                    case TouchPhase.Moved:
+                        break;
+                    case TouchPhase.Stationary:
+                        break;
+                    case TouchPhase.Canceled:
+                    case TouchPhase.Ended:
+                        touchDetails.RemoveAt(index);
+                        i--;
+                        break;
+
+                    default:
+                        break;
+                }
+                foreach (Touch touch in Input.touches)
+                    if (touchDetail.getId() == touch.fingerId)
+                    {
+                        touchDetail.updateTouch(touch);
+                        touchDetails[index] = touchDetail;
+                    }
+            }
+        }
+        else
         if (Input.touchCount > 0)
         {
-            Touch touch = Input.touches[0];
-            switch (touch.phase)
-            {
-                case TouchPhase.Began:
-                    if (gameManager.win)
-                        gameManager.Restart();
-                    else
-                    {
-                        GameObject f = TouchObject(touch);
-
-                        if (f != null)
-                        {
-                            if (f.name == "Area of Attack")
-                            {
-                                Attack(f);
-                            }
-                            if (f.name == "Area of Defence")
-                            {
-                                Defence(f);
-                            }
-                        }
-                        textField.text = name;
-                    }
-                    break;
-                case TouchPhase.Moved:
-                    if (touch.deltaPosition.sqrMagnitude > 100)
-                    {
-                        textField.text = "Moved";
-                        holdTime = 0;
-                    }
-                    break;
-                case TouchPhase.Stationary:
-                    holdTime += Time.fixedDeltaTime;
-                    if (holdTime > 1)
-                        textField.text = "Holding";
-                    break;
-                case TouchPhase.Ended:
-                    //textField.text = "untouched";
-                    holdTime = 0;
-                    break;
-                default:
-                    break;
-            }
+            foreach (Touch touch in Input.touches)
+                touchDetails.Add(new TouchDetail(touch.fingerId, touch, TouchObject(touch)));
         }
     }
 
@@ -72,7 +77,7 @@ public class TouchInput : MonoBehaviour
         GameObject touched = null;
         RaycastHit2D hit;
 
-        if (hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touch.position), Vector2.down))
+        if (hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touch.position), Vector2.zero))
         {
             touched = hit.collider.gameObject;
         }
@@ -80,13 +85,5 @@ public class TouchInput : MonoBehaviour
         return touched;
 
     }
-    private void Attack(GameObject area)
-    {
-        gameManager.DamageEnemy();
-    }
 
-    private void Defence(GameObject area)
-    {
-        gameManager.Defence();
-    }
 }

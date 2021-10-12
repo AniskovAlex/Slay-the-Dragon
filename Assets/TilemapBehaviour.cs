@@ -5,13 +5,22 @@ using UnityEngine;
 
 public class TilemapBehaviour : MonoBehaviour
 {
+    public int mapSizeX = 17;
+    public int mapSizeY = 17;
+    public int innerMadSizeXMin = 3;
+    public int innerMapSizeYMin = 3;
+    public int innerMapSizeXMax = 13;
+    public int innerMapSizeYMax = 13;
+    public int chanceLeftMin = 1, chanceLeftMax = 4;
+    public int chanceRightMin = 5, chanceRightMax = 8;
+    public int chanceDownMin = 9, chanceDownMax = 9;
 
     // Start is called before the first frame update
     void Start()
     {
 
         int[,] map = new int[18, 18];
-        int x = 0, y = 0;
+        int x = innerMadSizeXMin, y = innerMapSizeYMin;
         bool flag = false;
         map[x, y] = 1;
         while (!flag)
@@ -23,18 +32,18 @@ public class TilemapBehaviour : MonoBehaviour
             else
                 x++;
             {
-                if (y > 17)
+                if (y > innerMapSizeYMax)
                 {
                     y--;
                     x++;
                 }
-                if (x > 17)
+                if (x > innerMapSizeXMax)
                 {
                     y++;
                     x--;
                 }
             }
-            if (x >= 17 && y >= 17)
+            if (x >= innerMapSizeXMax && y >= innerMapSizeYMax)
                 flag = true;
             Debug.Log(x + " " + y);
             map[x, y] = 1;
@@ -74,9 +83,6 @@ public class TilemapBehaviour : MonoBehaviour
 
     void createNewRoot(ref int[,] map, int x, int y)
     {
-        int chanceLeftMin = 1, chanceLeftMax = 4;
-        int chanceRightMin = 5, chanceRightMax = 8;
-        int chanceDownMin = 9, chanceDownMax = 9;
         int dir = Random.Range(0, 2);
         if (dir == 0)
         {
@@ -108,7 +114,7 @@ public class TilemapBehaviour : MonoBehaviour
                 default:
                     break;
             }
-            if (x > 17 || y > 17 || x < 0 || y < 0)
+            if (x > innerMapSizeXMax || y > innerMapSizeYMax || x < innerMadSizeXMin || y < innerMapSizeYMin)
                 break;
             map[x, y] = 1;
             creatFieldAround(ref map, x, y, Random.Range(0, 5) + 3);
@@ -125,7 +131,7 @@ public class TilemapBehaviour : MonoBehaviour
             }
             int x0 = x, y0 = y;
             x0++;
-            if (x0 < 17)
+            if (x0 < mapSizeX)
                 if (map[x0, y0] == 0)
                 {
                     creatFieldAround(ref map, x0, y0, tilesLeft - 1);
@@ -139,7 +145,7 @@ public class TilemapBehaviour : MonoBehaviour
                 }
             x0 = x;
             y0++;
-            if (y0 < 17)
+            if (y0 < mapSizeY)
                 if (map[x0, y0] == 0)
                 {
                     creatFieldAround(ref map, x0, y0, tilesLeft - 1);

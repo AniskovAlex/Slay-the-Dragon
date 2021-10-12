@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameBehaviour : MonoBehaviour
+public class GameBehaviour : MonoBehaviour, IGameManager
 {
     public float health
     {
@@ -47,11 +47,11 @@ public class GameBehaviour : MonoBehaviour
     float staminaPerScale;
     float staminaRecoveryTime = 0f;
 
-    public bool win
+    bool win
     {
         get => winCondition;
     }
-    private bool winCondition;
+    bool winCondition;
 
     void Start()
     {
@@ -116,5 +116,28 @@ public class GameBehaviour : MonoBehaviour
     public void Restart()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public void TouchBegun(TouchDetail touch)
+    {
+        if (win)
+            Restart();
+        else
+        {
+            GameObject touchedObject = touch.getGameObject();
+            if (touchedObject!=null)
+                switch (touchedObject.name)
+                {
+                    case "Area of Attack":
+                        DamageEnemy();
+                        break;
+                    case "Area of Defence":
+                        Defence();
+                        break;
+                    default:
+                        break;
+                }
+        }
+            
     }
 }
