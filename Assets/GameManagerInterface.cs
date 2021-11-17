@@ -4,5 +4,7 @@ using UnityEngine;
 
 public interface IGameManager
 {
-    public void TouchBegun(TouchDetail touch);
+    public void TouchBegan(TouchDetail touch);
+    public void TouchMoved(TouchDetail touch);
+    public void TouchStationary(TouchDetail touch);
 }

@@ -8,14 +8,14 @@ public class TouchInput : MonoBehaviour
 
     List<TouchDetail> touchDetails = new List<TouchDetail>();
     delegate void test(TouchDetail touch);
-    event test report;
-
-    double holdTime = 0;
+    event test began, moved, stationary;
 
     void Start()
     {
         gameManager = GameObject.Find("Game Manager").GetComponent<IGameManager>();
-        report += gameManager.TouchBegun;
+        began += gameManager.TouchBegan;
+        moved += gameManager.TouchBegan;
+        stationary += gameManager.TouchBegan;
     }
 
     void Update()
@@ -41,11 +41,13 @@ public class TouchInput : MonoBehaviour
                 switch (touchDetail.getTouch().phase)
                 {
                     case TouchPhase.Began:
-                        report(touchDetail);
+                        began(touchDetail);
                         break;
                     case TouchPhase.Moved:
+                        moved(touchDetail);
                         break;
                     case TouchPhase.Stationary:
+                        stationary(touchDetail);
                         break;
                     case TouchPhase.Canceled:
                     case TouchPhase.Ended:
@@ -59,6 +61,7 @@ public class TouchInput : MonoBehaviour
                 foreach (Touch touch in Input.touches)
                     if (touchDetail.getId() == touch.fingerId)
                     {
+                        touchDetail.updateGameObject(TouchObject(touch));
                         touchDetail.updateTouch(touch);
                         touchDetails[index] = touchDetail;
                     }
@@ -80,6 +83,7 @@ public class TouchInput : MonoBehaviour
         if (hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touch.position), Vector2.zero))
         {
             touched = hit.collider.gameObject;
+            Debug.Log(touched.name);
         }
 
         return touched;

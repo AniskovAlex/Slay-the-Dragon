@@ -118,7 +118,7 @@ public class GameBehaviour : MonoBehaviour, IGameManager
         SceneManager.LoadScene(0);
     }
 
-    public void TouchBegun(TouchDetail touch)
+    public void TouchBegan(TouchDetail touch)
     {
         if (win)
             Restart();
@@ -140,4 +140,6 @@ public class GameBehaviour : MonoBehaviour, IGameManager
         }
             
     }
+    public void TouchMoved(TouchDetail touch) { }
+    public void TouchStationary(TouchDetail touch) { }
 }

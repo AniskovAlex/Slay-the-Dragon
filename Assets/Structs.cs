@@ -41,4 +41,21 @@ public struct TouchDetail
     {
         this.touch = touch;
     }
+
+    public void updateGameObject(GameObject gameObject)
+    {
+        this.gameObject = gameObject;
+    }
+}
+
+public struct Tile
+{
+    public const int Wall = 0;
+    public const int Road = 1;
+    public const int Field = 2;
+
+    public const int Player = 101;
+
+    public int ground;
+    public int prop;
 }

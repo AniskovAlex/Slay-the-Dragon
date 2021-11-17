@@ -14,19 +14,28 @@ public class TilemapBehaviour : MonoBehaviour
     public int chanceLeftMin = 1, chanceLeftMax = 4;
     public int chanceRightMin = 5, chanceRightMax = 8;
     public int chanceDownMin = 9, chanceDownMax = 9;
+    Tile[,] map;
+    GameObject player;
+    Vector2 playerPosition;
 
     // Start is called before the first frame update
     void Start()
     {
 
-        int[,] map = new int[18, 18];
+        map = new Tile[mapSizeX + 1, mapSizeY + 1];
+        player = GameObject.Find("Square");
         int x = innerMadSizeXMin, y = innerMapSizeYMin;
-        bool flag = false;
-        map[x, y] = 1;
-        while (!flag)
+        bool endRoad = false;
+
+        map[x, y].ground = Tile.Road;
+        map[x, y].prop = Tile.Player;
+        playerPosition = new Vector2(x, y);
+
+        // player.transform.position += (Vector3)(playerPosition * new Vector2(0.25f, 0.5f));
+
+        while (!endRoad)
         {
             int i = Random.Range(0, 2);
-            Debug.Log(i);
             if (i == 0)
                 y++;
             else
@@ -43,29 +52,32 @@ public class TilemapBehaviour : MonoBehaviour
                     x--;
                 }
             }
+
             if (x >= innerMapSizeXMax && y >= innerMapSizeYMax)
-                flag = true;
-            Debug.Log(x + " " + y);
-            map[x, y] = 1;
+                endRoad = true;
+            map[x, y].ground = Tile.Road;
+
             creatFieldAround(ref map, x, y, Random.Range(0, 3) + 3);
             int root = Random.Range(0, 10);
             if (root == 0)
                 createNewRoot(ref map, x, y);
         }
-        GameObject test = GameObject.Find("Tilemap");
-        Tilemap tileMap = test.GetComponent<Tilemap>();
+
+        Tilemap tileMap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
+
         TileBase tile = Resources.Load<TileBase>("Isometric Diamond");
         TileBase tileField = Resources.Load<TileBase>("Field");
-        for (int i = 0; i < 18; i++)
+
+        for (int i = 0; i <= mapSizeX; i++)
         {
-            for (int j = 0; j < 18; j++)
+            for (int j = 0; j <= mapSizeY; j++)
             {
-                switch (map[i, j])
+                switch (map[i, j].ground)
                 {
-                    case 1:
+                    case Tile.Road:
                         tileMap.SetTile(new Vector3Int(i, j, 0), tile);
                         break;
-                    case 2:
+                    case Tile.Field:
                         tileMap.SetTile(new Vector3Int(i, j, 0), tileField);
                         break;
                     default:
@@ -81,7 +93,7 @@ public class TilemapBehaviour : MonoBehaviour
 
     }
 
-    void createNewRoot(ref int[,] map, int x, int y)
+    void createNewRoot(ref Tile[,] map, int x, int y)
     {
         int dir = Random.Range(0, 2);
         if (dir == 0)
@@ -116,47 +128,75 @@ public class TilemapBehaviour : MonoBehaviour
             }
             if (x > innerMapSizeXMax || y > innerMapSizeYMax || x < innerMadSizeXMin || y < innerMapSizeYMin)
                 break;
-            map[x, y] = 1;
+            map[x, y].ground = Tile.Road;
             creatFieldAround(ref map, x, y, Random.Range(0, 5) + 3);
         }
     }
 
-    void creatFieldAround(ref int[,] map, int x, int y, int tilesLeft)
+    void creatFieldAround(ref Tile[,] map, int x, int y, int tilesLeft)
     {
         if (tilesLeft > 0)
         {
-            if (map[x, y] == 0)
+            if (map[x, y].ground == Tile.Wall)
             {
-                map[x, y] = 2;
+                map[x, y].ground = Tile.Field;
             }
             int x0 = x, y0 = y;
             x0++;
             if (x0 < mapSizeX)
-                if (map[x0, y0] == 0)
+                if (IsWall(map[x0, y0]))
                 {
                     creatFieldAround(ref map, x0, y0, tilesLeft - 1);
                 }
             x0 = x;
             x0--;
             if (x0 > 0)
-                if (map[x0, y0] == 0)
+                if (IsWall(map[x0, y0]))
                 {
                     creatFieldAround(ref map, x0, y0, tilesLeft - 1);
                 }
             x0 = x;
             y0++;
             if (y0 < mapSizeY)
-                if (map[x0, y0] == 0)
+                if (IsWall(map[x0, y0]))
                 {
                     creatFieldAround(ref map, x0, y0, tilesLeft - 1);
                 }
             y0 = y;
             y0--;
             if (y0 > 0)
-                if (map[x0, y0] == 0)
+                if (IsWall(map[x0, y0]))
                 {
                     creatFieldAround(ref map, x0, y0, tilesLeft - 1);
                 }
         }
     }
+    bool IsWall(Tile tile)
+    {
+        if (tile.ground == Tile.Wall)
+            return true;
+        else
+            return false;
+    }
+
+    public bool movePlayer(Vector2 mapDirection, Vector2 playerDirection)
+    {
+        Vector2 newPlayerPosition = playerPosition;
+        newPlayerPosition += mapDirection;
+        Debug.LogFormat("x: {0} y: {1}", (int)newPlayerPosition.x, (int)newPlayerPosition.y);
+        if (!IsWall(map[(int)newPlayerPosition.x, (int)newPlayerPosition.y]))
+        {
+            map[(int)playerPosition.x, (int)playerPosition.y].prop = 100;
+            playerPosition = newPlayerPosition;
+            map[(int)playerPosition.x, (int)playerPosition.y].prop = Tile.Player;
+            player.transform.position += (Vector3)(playerDirection);
+            return true; 
+        }
+        return false;
+    }
+
+    /*private Vector2 RectToIsom(Vector2 direction)
+    {
+        return new Vector2(Mathf.Sign(Mathf.Sign(direction.y) + Mathf.Sign(direction.x)), Mathf.Sign(Mathf.Sign(direction.y) + (-1) * Mathf.Sign(direction.x)));
+    }*/
 }
