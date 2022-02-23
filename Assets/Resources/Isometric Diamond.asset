@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Isometric Diamond
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 3625043607559282579, guid: 084fab3489ba6bb4c9419e4c23559f4f, type: 3}
+  m_Sprite: {fileID: 3625043607559282579, guid: df73b2e5a2bdc32408d33df1897d48e6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
