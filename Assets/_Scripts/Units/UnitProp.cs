@@ -8,5 +8,5 @@ public abstract class UnitProp : MonoBehaviour
 
     public virtual void OnTouch() { }
 
-    public virtual void Spawn(int x,int y) { }
+    public virtual UnitProp Spawn(int x,int y) { return this; }
 }

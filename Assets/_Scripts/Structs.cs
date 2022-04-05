@@ -62,13 +62,15 @@ public struct Tile
     public const int Wall = 0;
     public const int Road = 1;
     public const int Field = 2;
+    public const int Finish = 3;
 
     public const int Hero = 1001;
     public const int Enemy = 1000;
+    public const int FinishProp = 1002;
 
     public int ground;
     // все беды здесь
-    public int? prop;
+    public UnitProp prop;
 }
 
 public struct Save

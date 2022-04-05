@@ -2,48 +2,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MapGameManager : MonoBehaviour
 {
 
-    TilemapBehaviour map;
-    float timeDelayLeft = 0f;
     public const float timeDelayDiagoanl = 0.425f;
     public const float timeDelayStray = 0.375f;
-    /*GameObject saveObject;
-    SaveState saveState;*/
+    public Image bar;
+    public Cinemachine.CinemachineVirtualCamera mainCamera;
+    float barSizeOriginal;
+
+    TilemapBehaviour map;
+    float timeDelayLeft = 0f;
+    int health = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        barSizeOriginal = bar.rectTransform.rect.width;
         Time.timeScale = 1f;
         map = GameObject.Find("Map Generater").GetComponent<TilemapBehaviour>();
-        /*saveObject = GameObject.Find("Save State");
-        Debug.Log(saveObject);*/
         if (SaveData.GetSaveData().LoadMap()==null)
         {
-            /*saveObject = Resources.Load("Save State", typeof(GameObject)) as GameObject;
-            Debug.Log(saveObject.name);
-            saveObject = GameObject.Instantiate(saveObject);
-            saveState = saveObject.GetComponent<SaveState>();
-            saveState.SaveMap(map.GetTileMap());*/
-            map.createMap();
+            
+            map.CreateMap();
+            health = 100;
         }
         else
         {
-            map.loadMap(SaveData.GetSaveData().LoadMap());
+            map.LoadMap(SaveData.GetSaveData().LoadMap());
+            health = SaveData.GetSaveData().LoadHealth();
+            Debug.Log(health);
         }
+
+        mainCamera.Follow = GameObject.Find("Hero(Clone)").transform;
+
+        bar.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, barSizeOriginal * (0.01f * health));
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (timeDelayLeft > 0) timeDelayLeft -= Time.deltaTime;
-
-        /*if (Input.anyKeyDown)
+        if (timeDelayLeft > 0)
         {
-            loadScene();
-        }*/
+            timeDelayLeft -= Time.deltaTime;
+            map.playerMoved = false;
+        }
     }
 
     public float GetTimeDelay()
@@ -69,6 +74,7 @@ public class MapGameManager : MonoBehaviour
     public IEnumerator AsyncloadScene()
     {
         SaveData.GetSaveData().SaveMap(map.GetTileMap());
+        SaveData.GetSaveData().SaveHealth(health);
         Time.timeScale = 0f;
         Scene currentScene = SceneManager.GetActiveScene();
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
@@ -76,8 +82,13 @@ public class MapGameManager : MonoBehaviour
         {
             yield return null;
         }
-
-        //SceneManager.MoveGameObjectToScene(saveObject, SceneManager.GetSceneAt(1));
         SceneManager.UnloadSceneAsync(currentScene);
     }
+
+    public static void Restart()
+    {
+        SaveData.GetSaveData().ResetData();
+        SceneManager.LoadScene(0);
+    }
+
 }

@@ -51,6 +51,7 @@ public class Enemy : UnitDamageable
     // Update is called once per frame
     void Update()
     {
+        //rework ASAP
         if (timeToAttack <= 1f && swining)
         {
             gameObject.GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 0f, 255f);
@@ -70,9 +71,8 @@ public class Enemy : UnitDamageable
         {
             timeToAttack -= Time.deltaTime;
         }
-        if (healthChanged)
-            healthBar.transform.localScale = new Vector3(health / healthPerScale, healthBar.transform.localScale.y);
 
+        GraphicUpdate();
     }
 
     public override void Attack()
@@ -80,13 +80,13 @@ public class Enemy : UnitDamageable
         //gameManager.health -= damage;
 
         gameObject.GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, 255f);
-        timeToAttack = Random.Range(timeToAttackMin, timeToAttackMin + timeToAttackRange);
-        swining = true;
-        attacking = true;
         if (_attackEvent != null)
         {
             _attackEvent(this);
         }
+        timeToAttack = Random.Range(timeToAttackMin, timeToAttackMin + timeToAttackRange);
+        swining = true;
+        attacking = true;
     }
 
     public void AddAttackEvent(attackEventDel newEvent)
@@ -97,5 +97,11 @@ public class Enemy : UnitDamageable
     public void AddWinEvent(winEventDel newEvent)
     {
         _winEvent += newEvent;
+    }
+
+    void GraphicUpdate()
+    {
+        if (healthChanged)
+            healthBar.transform.localScale = new Vector3(health / healthPerScale, healthBar.transform.localScale.y);
     }
 }

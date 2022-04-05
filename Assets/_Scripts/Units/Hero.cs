@@ -58,8 +58,8 @@ public class Hero : UnitDamageable
     float staminaCurrent;
     float staminaRecoveryTime = 0f;
 
-    GameObject healthBar;
-    GameObject staminaBar;
+    GameObject _healthBar;
+    GameObject _staminaBar;
 
     float staminaPerScale;
     float healthPerScale;
@@ -68,10 +68,10 @@ public class Hero : UnitDamageable
     {
         stamina = staminaMax;
         health = healthMax;
-        healthBar = GameObject.Find("Health Bar");
-        staminaBar = GameObject.Find("Stamina Bar");
-        healthPerScale = healthMax / healthBar.transform.localScale.x;
-        staminaPerScale = staminaMax / staminaBar.transform.localScale.x;
+        _healthBar = GameObject.Find("Health Bar");
+        _staminaBar = GameObject.Find("Stamina Bar");
+        healthPerScale = healthMax / _healthBar.transform.localScale.x;
+        staminaPerScale = staminaMax / _staminaBar.transform.localScale.x;
     }
 
     // Update is called once per frame
@@ -86,17 +86,13 @@ public class Hero : UnitDamageable
         }
         if (staminaRecoveryTime > 0)
             staminaRecoveryTime -= Time.deltaTime;
-        if (healthChanged)
-            healthBar.transform.localScale = new Vector3(health / healthPerScale, healthBar.transform.localScale.y);
-        if (staminaChanged)
-            staminaBar.transform.localScale = new Vector3(stamina / staminaPerScale, staminaBar.transform.localScale.y);
+        GraphicUpdate();
     }
 
     public void Defence()
     {
         if (stamina > 20)
         {
-            Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             defenceTimeLeft = defenceTime;
             staminaCurrent -= 20;
             staminaRecoveryTime = 1f;
@@ -121,5 +117,13 @@ public class Hero : UnitDamageable
             staminaRecoveryTime = 1f;
             stamina -= 10;
         }
+    }
+
+    void GraphicUpdate()
+    {
+        if (healthChanged)
+            _healthBar.transform.localScale = new Vector3(health / healthPerScale, _healthBar.transform.localScale.y);
+        if (staminaChanged)
+            _staminaBar.transform.localScale = new Vector3(stamina / staminaPerScale, _staminaBar.transform.localScale.y);
     }
 }

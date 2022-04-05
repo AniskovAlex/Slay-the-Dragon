@@ -4,11 +4,10 @@ using UnityEngine;
 
 public abstract class UnitDamageable : MonoBehaviour
 {
-    public float damage;
+    public float damage = 20;
 
     public abstract float health { get; set; }
     
-
     public float healthMax = 100;
     public bool healthChanged = false;
     protected float healthCurrent;

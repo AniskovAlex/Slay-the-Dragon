@@ -5,15 +5,7 @@ using UnityEngine;
 public class AreaDefence : Touchable
 {
 
-    public override void Touched()
-    {
-        _hero.Defence();
-    }
 
-    public override void Touching()
-    {
-        
-    }
 
     Hero _hero;
     // Start is called before the first frame update
@@ -24,6 +16,14 @@ public class AreaDefence : Touchable
 
     // Update is called once per frame
     void Update()
+    {
+        
+    }
+    public override void Touched()
+    {
+        _hero.Defence();
+    }
+    public override void Touching()
     {
         
     }
