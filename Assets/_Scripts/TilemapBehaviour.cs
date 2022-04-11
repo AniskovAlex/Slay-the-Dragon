@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections;
+using System.Collections.Generic;
 
 public class TilemapBehaviour : MonoBehaviour
 {
@@ -15,10 +17,13 @@ public class TilemapBehaviour : MonoBehaviour
     public GameObject _enemyBody;
     public GameObject _heroBody;
     public GameObject _finish;
+    public GameObject _healBody;
     EnemyMapBehaviour _enemy;
+    Heal _heal;
     Tile[,] _map;
     MapHero _hero;
     MapHero _heroCurrent;
+    public List<UnitProp> _propList;
 
     public bool playerMoved = false;
 
@@ -30,7 +35,7 @@ public class TilemapBehaviour : MonoBehaviour
 
         _enemy = _enemyBody.GetComponent<EnemyMapBehaviour>();
         _hero = _heroBody.GetComponent<MapHero>();
-
+        _heal = _healBody.GetComponent<Heal>();
     }
 
     public void CreateMap()
@@ -114,12 +119,14 @@ public class TilemapBehaviour : MonoBehaviour
                 }
                 if (_map[i, j].prop != null)
                 {
-                    Debug.Log(_map[i, j].prop.name);
-                    _map[i, j].prop.Spawn(i, j);
+                    _propList.Add(_map[i, j].prop.Spawn(i, j));
                 }
             }
         }
-        
+        foreach(UnitProp x in _propList)
+        {
+            Debug.Log(x.name + " "+ x.isomPosition);
+        }
     }
 
     void CreateNewRoot(ref Tile[,] map, int x, int y)
@@ -174,6 +181,10 @@ public class TilemapBehaviour : MonoBehaviour
             if (map[x, y].ground == Tile.Wall)
             {
                 map[x, y].ground = Tile.Field;
+                int j = Random.Range(0, 100);
+                if (j == 0)
+                    if (!IsProp(_map[x, y]))
+                        _map[x, y].prop = _heal;
             }
             int x0 = x, y0 = y;
             x0++;
@@ -234,7 +245,9 @@ public class TilemapBehaviour : MonoBehaviour
                 //_map[(int)hero.isomPosition.x, (int)hero.isomPosition.y].prop = null;
                 //hero.isomPosition = newPlayerPosition;
                 //_map[(int)hero.isomPosition.x, (int)hero.isomPosition.y].prop = _hero;
-                _map[(int)newPlayerPosition.x, (int)newPlayerPosition.y].prop.OnTouch();
+                Debug.Log("aaaaaaaaaaa");
+                
+                _map[(int)newPlayerPosition.x, (int)newPlayerPosition.y].prop.OnTouch(newPlayerPosition);
             }
             else
             {
@@ -261,7 +274,7 @@ public class TilemapBehaviour : MonoBehaviour
             if(_map[(int)newPosition.x, (int)newPosition.y].prop == _hero)
             {
                 _map[(int)currentPosition.x, (int)currentPosition.y].prop = null;
-                enemy.OnTouch();
+                enemy.OnTouch(newPosition);
             }
         }
 
@@ -312,5 +325,26 @@ public class TilemapBehaviour : MonoBehaviour
         if (((x >= 0 && x <= mapSizeX) && ((y >= 0 && y <= mapSizeY))))
             return true;
         else return false;
+    }
+
+    public void SwapProp(UnitProp to, Vector2 position)
+    {
+        _map[(int)position.x, (int)position.y].prop = to;
+        Debug.Log(position);
+        foreach (UnitProp x in _propList)
+        {
+            if (x.isomPosition == position)
+            {
+                Debug.Log(x.isomPosition + "dddddddd");
+                _propList.Remove(x);
+                Destroy(x.gameObject);
+                _propList.Add(to.Spawn((int)position.x, (int)position.y));
+                foreach (UnitProp y in _propList)
+                {
+                    Debug.Log(y.name + " " + y.isomPosition);
+                }
+                return;
+            }
+        }
     }
 }

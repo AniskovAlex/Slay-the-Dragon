@@ -1092,6 +1092,8 @@ MonoBehaviour:
   _enemyBody: {fileID: 1605649648553258333, guid: 8b6796716d9eb874590e0e4308f34a9b, type: 3}
   _heroBody: {fileID: 2084095182514686523, guid: ef7f6c18449ab9e4586c57fad016e617, type: 3}
   _finish: {fileID: 6730037297485946338, guid: 499e2efdae68a4e4b90a8aac7a07ec0b, type: 3}
+  _healBody: {fileID: 1190852763431363840, guid: f0b6a793997fa744a8b070d0a14397d6, type: 3}
+  playerMoved: 0
 --- !u!4 &1079465616
 Transform:
   m_ObjectHideFlags: 0

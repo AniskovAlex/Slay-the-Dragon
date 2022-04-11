@@ -8,7 +8,7 @@ public class Finish : UnitProp
     {
         
     }
-    public override void OnTouch()
+    public override void OnTouch(Vector2 position)
     {
         MapGameManager.Restart();
     }

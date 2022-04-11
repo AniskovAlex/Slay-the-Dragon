@@ -15,7 +15,17 @@ public class MapGameManager : MonoBehaviour
 
     TilemapBehaviour map;
     float timeDelayLeft = 0f;
-    int health = 0;
+    float healthCurrent = 0f;
+
+    float health
+    {
+        get => healthCurrent;
+        set
+        {
+            // временно
+            healthCurrent = Mathf.Clamp(value, 0, 100);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -38,7 +48,7 @@ public class MapGameManager : MonoBehaviour
 
         mainCamera.Follow = GameObject.Find("Hero(Clone)").transform;
 
-        bar.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, barSizeOriginal * (0.01f * health));
+        UpdateUI();
     }
 
     // Update is called once per frame
@@ -74,7 +84,7 @@ public class MapGameManager : MonoBehaviour
     public IEnumerator AsyncloadScene()
     {
         SaveData.GetSaveData().SaveMap(map.GetTileMap());
-        SaveData.GetSaveData().SaveHealth(health);
+        SaveData.GetSaveData().SaveHealth((int)health);
         Time.timeScale = 0f;
         Scene currentScene = SceneManager.GetActiveScene();
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
@@ -91,4 +101,14 @@ public class MapGameManager : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
+    public void ChangeHealth(int addHealth)
+    {
+        health += addHealth;
+        UpdateUI();
+    }
+
+    void UpdateUI()
+    {
+        bar.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, barSizeOriginal * (0.01f * health));
+    }
 }

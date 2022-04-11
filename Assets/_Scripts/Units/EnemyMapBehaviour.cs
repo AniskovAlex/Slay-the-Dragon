@@ -148,7 +148,7 @@ public class EnemyMapBehaviour : UnitProp
         //Debug.Log(enemy);
     }
 
-    public override void OnTouch()
+    public override void OnTouch(Vector2 position)
     {
         GameObject.Find("Game Manager").GetComponent<MapGameManager>().loadScene();
     }
